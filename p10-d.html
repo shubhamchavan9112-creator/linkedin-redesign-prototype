@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>LinkedIn Redesign — Maya's Job Hunt (P10-D)</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --blue: #0A66C2;
+    --blue-dark: #004182;
+    --blue-light: #EAF4FF;
+    --navy: #0f2942;
+    --gold: #F5A623;
+    --green: #057642;
+    --green-light: #E8F5EE;
+    --red: #B24020;
+    --gray-50: #F9FAFB;
+    --gray-100: #F3F4F6;
+    --gray-200: #E5E7EB;
+    --gray-400: #9CA3AF;
+    --gray-600: #4B5563;
+    --gray-800: #1F2937;
+    --white: #ffffff;
+    --radius: 10px;
+    --shadow: 0 1px 4px rgba(0,0,0,0.12);
+    --shadow-lg: 0 4px 16px rgba(0,0,0,0.12);
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--gray-100);
+    color: var(--gray-800);
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  /* NAV */
+  .nav {
+    background: var(--white);
+    border-bottom: 1px solid var(--gray-200);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 20px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: var(--shadow);
+  }
+  .nav-logo { font-size: 22px; font-weight: 800; color: var(--blue); letter-spacing: -0.5px; }
+  .nav-links { display: flex; gap: 24px; align-items: center; }
+  .nav-link { font-size: 12px; color: var(--gray-600); text-align: center; cursor: pointer; }
+  .nav-link:hover { color: var(--blue); }
+  .nav-avatar { width: 30px; height: 30px; border-radius: 50%; background: var(--blue); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; cursor: pointer; }
+
+  /* PROGRESS STEPPER */
+  .stepper {
+    background: var(--white);
+    border-bottom: 1px solid var(--gray-200);
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    overflow-x: auto;
+    font-size: 12px;
+  }
+  .step { display: flex; align-items: center; gap: 6px; white-space: nowrap; }
+  .step-num { width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; }
+  .step-num.active { background: var(--blue); color: white; }
+  .step-num.done { background: var(--green); color: white; }
+  .step-num.inactive { background: var(--gray-200); color: var(--gray-600); }
+  .step-label.active { color: var(--blue); font-weight: 600; }
+  .step-label.inactive { color: var(--gray-400); }
+  .step-sep { color: var(--gray-300); font-size: 14px; }
+
+  /* SCREENS */
+  .screen { display: none; padding: 16px 20px; max-width: 680px; margin: 0 auto; }
+  .screen.active { display: block; }
+
+  /* CARDS */
+  .card { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 12px; overflow: hidden; }
+  .card-header { padding: 14px 16px; border-bottom: 1px solid var(--gray-100); }
+  .card-body { padding: 14px 16px; }
+
+  /* PROFILE CARD */
+  .profile-banner { height: 60px; background: linear-gradient(135deg, var(--blue) 0%, var(--blue-dark) 100%); }
+  .profile-info { padding: 0 16px 14px; position: relative; }
+  .profile-avatar { width: 56px; height: 56px; border-radius: 50%; background: var(--navy); border: 3px solid white; color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px; margin-top: -28px; margin-bottom: 6px; }
+  .profile-name { font-weight: 700; font-size: 15px; }
+  .profile-sub { color: var(--gray-600); font-size: 12px; margin-top: 2px; }
+  .profile-stats { display: flex; gap: 16px; margin-top: 10px; }
+  .profile-stat { font-size: 12px; }
+  .profile-stat span { color: var(--blue); font-weight: 600; }
+
+  /* SECTION TITLE */
+  .section-title { font-size: 13px; font-weight: 700; color: var(--gray-800); margin-bottom: 10px; }
+
+  /* JOB CARD */
+  .job-card { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); padding: 14px 16px; margin-bottom: 10px; cursor: pointer; border: 1.5px solid transparent; transition: border 0.15s, box-shadow 0.15s; }
+  .job-card:hover { border-color: var(--blue); box-shadow: var(--shadow-lg); }
+  .job-top { display: flex; gap: 12px; align-items: flex-start; }
+  .job-logo { width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+  .job-info { flex: 1; }
+  .job-title { font-weight: 700; font-size: 14px; color: var(--blue); }
+  .job-company { font-size: 13px; color: var(--gray-800); }
+  .job-meta { font-size: 12px; color: var(--gray-600); margin-top: 2px; }
+  .job-salary { font-size: 12px; color: var(--green); font-weight: 600; margin-top: 2px; }
+  .job-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; align-items: center; }
+  .tag { font-size: 11px; padding: 3px 8px; border-radius: 20px; font-weight: 500; }
+  .tag-easy { background: var(--green-light); color: var(--green); }
+  .tag-insights { background: var(--blue-light); color: var(--blue); }
+  .tag-closing { background: #FFF3E0; color: #E65100; }
+
+  /* RECRUITER BADGE */
+  .recruiter-badge { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+  .badge-gold { background: #FFF8E7; color: #8a5c00; border: 1px solid #F5A623; }
+  .badge-silver { background: #F5F5F5; color: #555; border: 1px solid #aaa; }
+  .badge-bronze { background: #FDF0E8; color: #7B3F00; border: 1px solid #CD7F32; }
+  .recruiter-score-bar { height: 5px; border-radius: 3px; background: var(--gray-200); margin-top: 4px; overflow: hidden; }
+  .recruiter-score-fill { height: 100%; border-radius: 3px; }
+  .score-gold { background: var(--gold); }
+  .score-silver { background: #aaa; }
+  .score-bronze { background: #CD7F32; }
+
+  /* FILTER BAR */
+  .filter-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; align-items: center; }
+  .filter-chip { font-size: 12px; padding: 5px 12px; border-radius: 20px; border: 1.5px solid var(--gray-300); background: var(--white); color: var(--gray-700); cursor: pointer; font-weight: 500; transition: all 0.15s; display: flex; align-items: center; gap: 4px; }
+  .filter-chip.active { border-color: var(--blue); background: var(--blue-light); color: var(--blue); }
+  .filter-chip:hover { border-color: var(--blue); }
+  .filter-count { background: var(--blue); color: white; border-radius: 10px; padding: 0 5px; font-size: 10px; }
+  .filter-warning { font-size: 11px; color: var(--red); background: #FFF0EE; padding: 6px 12px; border-radius: 6px; margin-bottom: 10px; display: none; }
+  .filter-warning.show { display: block; }
+
+  /* BUTTONS */
+  .btn { padding: 8px 18px; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; transition: all 0.15s; }
+  .btn-primary { background: var(--blue); color: white; }
+  .btn-primary:hover { background: var(--blue-dark); }
+  .btn-outline { background: transparent; color: var(--blue); border: 1.5px solid var(--blue); }
+  .btn-outline:hover { background: var(--blue-light); }
+  .btn-sm { padding: 5px 12px; font-size: 12px; }
+  .btn-green { background: var(--green); color: white; }
+  .btn-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+
+  /* COMMUNITY INSIGHTS */
+  .insights-section { border-top: 1px solid var(--gray-100); margin-top: 12px; padding-top: 12px; }
+  .insights-title { font-size: 13px; font-weight: 700; color: var(--gray-800); margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+  .insights-new { font-size: 10px; background: var(--blue); color: white; padding: 2px 6px; border-radius: 4px; font-weight: 700; }
+  .insight-card { background: var(--gray-50); border-radius: 8px; padding: 12px; margin-bottom: 8px; border: 1px solid var(--gray-200); }
+  .insight-top { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+  .insight-avatar { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: white; flex-shrink: 0; }
+  .insight-name { font-size: 12px; font-weight: 600; }
+  .insight-meta { font-size: 11px; color: var(--gray-600); }
+  .verified-badge { display: inline-flex; align-items: center; gap: 3px; font-size: 10px; color: var(--green); font-weight: 600; background: var(--green-light); padding: 2px 6px; border-radius: 4px; }
+  .insight-text { font-size: 12px; color: var(--gray-700); line-height: 1.5; }
+  .insight-helpful { font-size: 11px; color: var(--gray-500); margin-top: 6px; display: flex; gap: 10px; }
+  .insight-helpful span { cursor: pointer; }
+  .insight-helpful span:hover { color: var(--blue); }
+
+  /* TRACKER */
+  .tracker-steps { margin: 12px 0; }
+  .tracker-step { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 14px; }
+  .tracker-icon { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; }
+  .tracker-icon.done { background: var(--green); color: white; }
+  .tracker-icon.active { background: var(--blue); color: white; }
+  .tracker-icon.pending { background: var(--gray-200); color: var(--gray-500); }
+  .tracker-content { flex: 1; }
+  .tracker-label { font-weight: 600; font-size: 13px; }
+  .tracker-date { font-size: 11px; color: var(--gray-500); }
+  .tracker-timing { font-size: 11px; color: var(--blue); margin-top: 2px; background: var(--blue-light); padding: 3px 8px; border-radius: 4px; display: inline-block; margin-top: 4px; }
+  .tracker-likelihood { margin-top: 8px; }
+  .tracker-likelihood-label { font-size: 11px; color: var(--gray-600); margin-bottom: 3px; }
+  .likelihood-bar { height: 6px; border-radius: 3px; background: var(--gray-200); }
+  .likelihood-fill { height: 100%; border-radius: 3px; background: var(--blue); width: 62%; }
+  .likelihood-pct { font-size: 11px; color: var(--blue); font-weight: 600; margin-top: 2px; }
+  .notify-box { background: var(--blue-light); border-radius: 8px; padding: 10px 12px; margin-top: 10px; font-size: 12px; color: var(--blue-dark); display: flex; justify-content: space-between; align-items: center; }
+  .notify-btn { font-size: 11px; font-weight: 700; color: var(--blue); cursor: pointer; white-space: nowrap; }
+
+  /* MATCH SCORE */
+  .match-bar-wrap { margin: 10px 0; }
+  .match-bar-label { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px; }
+  .match-bar { height: 8px; border-radius: 4px; background: var(--gray-200); }
+  .match-fill { height: 100%; border-radius: 4px; background: var(--green); width: 78%; }
+
+  /* SKILL TAGS */
+  .skill-tag { display: inline-block; font-size: 11px; padding: 3px 8px; border-radius: 4px; margin: 2px; }
+  .skill-have { background: var(--green-light); color: var(--green); }
+  .skill-missing { background: #FFF0EE; color: var(--red); }
+
+  /* SUCCESS */
+  .success-icon { font-size: 48px; text-align: center; margin: 16px 0 8px; }
+  .success-title { font-size: 20px; font-weight: 800; text-align: center; color: var(--gray-800); }
+  .success-sub { text-align: center; color: var(--gray-600); font-size: 13px; margin-top: 4px; }
+  .detail-table { width: 100%; border-collapse: collapse; margin: 12px 0; }
+  .detail-table td { padding: 7px 0; border-bottom: 1px solid var(--gray-100); font-size: 13px; }
+  .detail-table td:first-child { color: var(--gray-600); width: 40%; }
+  .detail-table td:last-child { font-weight: 600; }
+
+  /* CLARITY */
+  .clarity-hero { text-align: center; padding: 20px 0 10px; }
+  .clarity-star { font-size: 40px; }
+  .clarity-title { font-size: 22px; font-weight: 800; color: var(--gray-800); margin-top: 6px; }
+  .clarity-sub { font-size: 13px; color: var(--gray-600); margin-top: 4px; }
+  .confidence-wrap { margin: 14px 0; }
+  .confidence-label { font-size: 12px; color: var(--gray-600); margin-bottom: 4px; }
+  .confidence-bar { height: 10px; border-radius: 5px; background: var(--gray-200); }
+  .confidence-fill { height: 100%; border-radius: 5px; background: linear-gradient(90deg, var(--blue), var(--green)); width: 85%; }
+  .clarity-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 14px 0; }
+  .clarity-card { background: var(--gray-50); border-radius: 8px; padding: 12px; border: 1px solid var(--gray-200); }
+  .clarity-card-icon { font-size: 20px; margin-bottom: 6px; }
+  .clarity-card-title { font-size: 12px; font-weight: 700; color: var(--gray-800); margin-bottom: 4px; }
+  .clarity-card-text { font-size: 11px; color: var(--gray-600); line-height: 1.5; }
+
+  /* FOOTER */
+  .team-footer { text-align: center; font-size: 11px; color: var(--gray-400); padding: 16px; margin-top: 8px; }
+
+  /* APPLY MODAL */
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 200; align-items: center; justify-content: center; }
+  .modal-overlay.open { display: flex; }
+  .modal { background: white; border-radius: 14px; padding: 24px; width: 90%; max-width: 400px; box-shadow: var(--shadow-lg); }
+  .modal-title { font-size: 16px; font-weight: 700; margin-bottom: 14px; }
+  .modal-company { font-size: 13px; color: var(--gray-600); margin-bottom: 16px; }
+  .form-group { margin-bottom: 12px; }
+  .form-label { font-size: 12px; font-weight: 600; color: var(--gray-700); margin-bottom: 4px; display: block; }
+  .form-input { width: 100%; padding: 8px 12px; border: 1.5px solid var(--gray-200); border-radius: 8px; font-size: 13px; outline: none; }
+  .form-input:focus { border-color: var(--blue); }
+  .modal-actions { display: flex; gap: 8px; margin-top: 16px; }
+
+  /* FEED POST */
+  .post-card { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); padding: 14px 16px; margin-bottom: 10px; }
+  .post-top { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 8px; }
+  .post-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--blue); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; flex-shrink: 0; }
+  .post-name { font-weight: 600; font-size: 13px; }
+  .post-role { font-size: 11px; color: var(--gray-500); }
+  .post-text { font-size: 13px; color: var(--gray-700); line-height: 1.6; }
+  .post-actions { display: flex; gap: 16px; margin-top: 10px; border-top: 1px solid var(--gray-100); padding-top: 8px; }
+  .post-action { font-size: 12px; color: var(--gray-600); cursor: pointer; display: flex; align-items: center; gap: 4px; }
+  .post-action:hover { color: var(--blue); }
+
+  /* ALERT BOX */
+  .alert { padding: 10px 14px; border-radius: 8px; font-size: 12px; margin-bottom: 10px; }
+  .alert-blue { background: var(--blue-light); color: var(--blue-dark); border-left: 3px solid var(--blue); }
+  .alert-green { background: var(--green-light); color: var(--green); border-left: 3px solid var(--green); }
+
+  /* RECRUITER INFO */
+  .recruiter-info { background: var(--gray-50); border: 1px solid var(--gray-200); border-radius: 8px; padding: 12px; margin: 10px 0; }
+  .recruiter-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+  .recruiter-name { font-size: 13px; font-weight: 600; }
+  .recruiter-metrics { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 8px; }
+  .recruiter-metric { text-align: center; }
+  .recruiter-metric-val { font-size: 14px; font-weight: 700; color: var(--blue); }
+  .recruiter-metric-label { font-size: 10px; color: var(--gray-500); }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-logo">in</div>
+  <div class="nav-links">
+    <div class="nav-link">Home</div>
+    <div class="nav-link">Network</div>
+    <div class="nav-link">Jobs</div>
+    <div class="nav-link">Messaging</div>
+    <div class="nav-avatar">M</div>
+  </div>
+</nav>
+
+<!-- STEPPER -->
+<div class="stepper" id="stepper">
+  <div class="step">
+    <div class="step-num active" id="sn1">①</div>
+    <div class="step-label active" id="sl1">Browse Jobs</div>
+  </div>
+  <div class="step-sep">›</div>
+  <div class="step">
+    <div class="step-num inactive" id="sn2">②</div>
+    <div class="step-label inactive" id="sl2">Job Details + Insights</div>
+  </div>
+  <div class="step-sep">›</div>
+  <div class="step">
+    <div class="step-num inactive" id="sn3">③</div>
+    <div class="step-label inactive" id="sl3">Apply</div>
+  </div>
+  <div class="step-sep">›</div>
+  <div class="step">
+    <div class="step-num inactive" id="sn4">④</div>
+    <div class="step-label inactive" id="sl4">Track Application</div>
+  </div>
+  <div class="step-sep">›</div>
+  <div class="step">
+    <div class="step-num inactive" id="sn5">⑤</div>
+    <div class="step-label inactive" id="sl5">Clarity</div>
+  </div>
+</div>
+
+<!-- ============ SCREEN 1: BROWSE JOBS ============ -->
+<div class="screen active" id="screen1">
+
+  <!-- Profile -->
+  <div class="card" style="margin-top:12px;">
+    <div class="profile-banner"></div>
+    <div class="profile-info">
+      <div class="profile-avatar">M</div>
+      <div class="profile-name">Maya Dutt</div>
+      <div class="profile-sub">M.S. Information Science · UIUC '25</div>
+      <div class="profile-stats">
+        <div class="profile-stat">Profile viewers <span>47</span></div>
+        <div class="profile-stat">Post impressions <span>312</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NEW: Smart Filters -->
+  <div class="card">
+    <div class="card-body">
+      <div class="section-title">🔍 Filter Jobs</div>
+      <div class="filter-bar">
+        <div class="filter-chip active" onclick="toggleFilter(this)">All <span class="filter-count">47</span></div>
+        <div class="filter-chip" onclick="toggleFilter(this)">Product Manager</div>
+        <div class="filter-chip" onclick="toggleFilter(this)">Remote</div>
+        <div class="filter-chip" onclick="toggleFilter(this)">$100K+</div>
+        <div class="filter-chip" onclick="toggleFilter(this)">Easy Apply</div>
+        <div class="filter-chip" onclick="toggleFilter(this)">New Grad</div>
+      </div>
+      <div class="filter-warning" id="filterWarning">
+        ⚠️ Showing only jobs that match ALL selected filters. Results are exact — no irrelevant postings.
+      </div>
+    </div>
+  </div>
+
+  <!-- Recommended Jobs -->
+  <div class="section-title" style="padding: 0 4px;">Recommended for you · <span style="color:var(--gray-500); font-weight:400;">Graduation coming soon</span></div>
+
+  <!-- Job 1 -->
+  <div class="job-card" onclick="goTo(2)">
+    <div class="job-top">
+      <div class="job-logo" style="background:#E8F0FE;">🏢</div>
+      <div class="job-info">
+        <div class="job-title">Product Manager – New Grad</div>
+        <div class="job-company">Google · Mountain View, CA</div>
+        <div class="job-meta">Hybrid · 2 days ago · 892 applicants</div>
+        <div class="job-salary">$115K – $145K / yr</div>
+      </div>
+    </div>
+    <div class="job-tags">
+      <span class="tag tag-easy">✓ Easy Apply</span>
+      <span class="tag tag-insights">💬 Community Insights</span>
+    </div>
+    <!-- Recruiter Badge Preview -->
+    <div style="margin-top:8px; display:flex; align-items:center; gap:6px;">
+      <span style="font-size:11px; color:var(--gray-500);">Recruiter:</span>
+      <span class="recruiter-badge badge-gold">🏅 Gold · 94% responsive</span>
+    </div>
+  </div>
+
+  <!-- Job 2 -->
+  <div class="job-card">
+    <div class="job-top">
+      <div class="job-logo" style="background:#E3F2FD;">🔷</div>
+      <div class="job-info">
+        <div class="job-title">Associate Product Manager</div>
+        <div class="job-company">Microsoft · Redmond, WA</div>
+        <div class="job-meta">On-site · 1 day ago · 654 applicants</div>
+        <div class="job-salary">$108K – $132K / yr</div>
+      </div>
+    </div>
+    <div class="job-tags">
+      <span class="tag tag-easy">✓ Easy Apply</span>
+      <span class="tag tag-insights">💬 Community Insights</span>
+    </div>
+    <div style="margin-top:8px; display:flex; align-items:center; gap:6px;">
+      <span style="font-size:11px; color:var(--gray-500);">Recruiter:</span>
+      <span class="recruiter-badge badge-silver">🥈 Silver · 78% responsive</span>
+    </div>
+  </div>
+
+  <!-- Job 3 -->
+  <div class="job-card">
+    <div class="job-top">
+      <div class="job-logo" style="background:#FFF3E0;">🟠</div>
+      <div class="job-info">
+        <div class="job-title">Operations Analyst</div>
+        <div class="job-company">Amazon · Chicago, IL</div>
+        <div class="job-meta">Remote · 3 days ago · 1.2K applicants</div>
+        <div class="job-salary">$95K – $118K / yr</div>
+      </div>
+    </div>
+    <div class="job-tags">
+      <span class="tag tag-closing">⏱ Closing soon</span>
+    </div>
+    <div style="margin-top:8px; display:flex; align-items:center; gap:6px;">
+      <span style="font-size:11px; color:var(--gray-500);">Recruiter:</span>
+      <span class="recruiter-badge badge-bronze">🥉 Bronze · 52% responsive</span>
+    </div>
+  </div>
+
+  <!-- Feed Post -->
+  <div class="post-card">
+    <div class="post-top">
+      <div class="post-avatar" style="font-size:13px;">R</div>
+      <div>
+        <div class="post-name">Rahul Singh · 2nd</div>
+        <div class="post-role">PM at Salesforce · 3h</div>
+      </div>
+    </div>
+    <div class="post-text">Just got my offer from Google after a 6-week process 🎉 The wait after applying was the hardest part — no updates for 3 weeks. Hang in there, new grads. The silence is normal!</div>
+    <div class="post-actions">
+      <div class="post-action">👍 Like</div>
+      <div class="post-action">💬 Comment</div>
+      <div class="post-action">🔁 Repost</div>
+    </div>
+  </div>
+
+  <div class="alert alert-blue">🎓 Your graduation is 3 months away · 47 community-verified jobs match your profile this week.</div>
+
+  <div style="text-align:center; margin: 8px 0 20px;">
+    <button class="btn btn-primary" onclick="goTo(2)">Browse Community-Verified Jobs →</button>
+  </div>
+</div>
+
+<!-- ============ SCREEN 2: JOB DETAILS ============ -->
+<div class="screen" id="screen2">
+  <div style="margin: 12px 0 10px;">
+    <span style="font-size:13px; color:var(--blue); cursor:pointer;" onclick="goTo(1)">← Back to Jobs</span>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <div style="display:flex; gap:12px; align-items:flex-start;">
+        <div class="job-logo" style="background:#E8F0FE; width:48px; height:48px; border-radius:10px; font-size:22px;">🏢</div>
+        <div style="flex:1;">
+          <div style="font-size:17px; font-weight:800; color:var(--gray-800);">Product Manager – New Grad 2025</div>
+          <div style="font-size:13px; color:var(--gray-600); margin-top:3px;">Google · Mountain View, CA · Hybrid</div>
+          <div style="font-size:13px; color:var(--green); font-weight:600; margin-top:2px;">$115,000 – $145,000/yr · Full-time · Posted 2 days ago</div>
+        </div>
+      </div>
+
+      <div style="margin-top:10px; font-size:13px; color:var(--gray-600);">👥 892 applicants · Still actively reviewing</div>
+
+      <!-- Match Score -->
+      <div class="match-bar-wrap" style="margin-top:12px;">
+        <div class="match-bar-label">
+          <span style="font-weight:600;">✅ Your profile is a strong match</span>
+          <span style="color:var(--green); font-weight:700;">78%</span>
+        </div>
+        <div class="match-bar"><div class="match-fill"></div></div>
+        <div style="font-size:12px; color:var(--gray-600); margin-top:4px;">You have 7 of 9 required skills</div>
+        <div style="margin-top:6px;">
+          <span class="skill-tag skill-have">Product Strategy</span>
+          <span class="skill-tag skill-have">User Research</span>
+          <span class="skill-tag skill-have">Cross-functional</span>
+          <span class="skill-tag skill-have">Data Analysis</span>
+          <span class="skill-tag skill-have">Roadmapping</span>
+          <span class="skill-tag skill-missing">+ Agile</span>
+          <span class="skill-tag skill-missing">+ SQL</span>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="openModal()">Apply Now — Easy Apply</button>
+        <button class="btn btn-outline">💾 Save</button>
+        <button class="btn btn-outline">📤 Share</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- NEW: Recruiter Credibility Score -->
+  <div class="card">
+    <div class="card-body">
+      <div class="section-title">👤 Recruiter Credibility Score</div>
+      <div class="recruiter-info">
+        <div class="recruiter-row">
+          <div>
+            <div class="recruiter-name">Sarah Chen · Senior Recruiter at Google</div>
+            <div style="font-size:11px; color:var(--gray-500); margin-top:2px;">Recruiting for 3 years · 240 processes completed</div>
+          </div>
+          <span class="recruiter-badge badge-gold">🏅 Gold</span>
+        </div>
+        <div class="recruiter-score-bar"><div class="recruiter-score-fill score-gold" style="width:94%;"></div></div>
+        <div style="font-size:11px; color:var(--gray-500); margin-top:3px; margin-bottom:8px;">Overall score: 94 / 100</div>
+        <div class="recruiter-metrics">
+          <div class="recruiter-metric">
+            <div class="recruiter-metric-val">96%</div>
+            <div class="recruiter-metric-label">Response rate</div>
+          </div>
+          <div class="recruiter-metric">
+            <div class="recruiter-metric-val">91%</div>
+            <div class="recruiter-metric-label">Process completion</div>
+          </div>
+          <div class="recruiter-metric">
+            <div class="recruiter-metric-val">2.1 days</div>
+            <div class="recruiter-metric-label">Avg. response time</div>
+          </div>
+        </div>
+        <div style="font-size:11px; color:var(--gray-600); margin-top:8px; background:var(--blue-light); padding:6px 10px; border-radius:6px;">
+          💡 Gold recruiters consistently follow through — candidates rarely get ghosted.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- About Role -->
+  <div class="card">
+    <div class="card-body">
+      <div class="section-title">About the role</div>
+      <p style="font-size:13px; color:var(--gray-700); line-height:1.6;">Join Google's PM team as a new graduate and help shape the next generation of products used by billions. You'll work cross-functionally with engineering, design, and data science to define product strategy and drive execution.</p>
+      <div style="margin-top:10px; font-size:13px; color:var(--gray-700);">
+        <strong>Responsibilities:</strong>
+        <ul style="margin-top:4px; padding-left:18px; line-height:1.8;">
+          <li>Define and prioritize product requirements based on user research</li>
+          <li>Collaborate with engineering and design on feature development</li>
+          <li>Analyze product metrics and identify improvement opportunities</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Community Insights with Verified Badges -->
+  <div class="card">
+    <div class="card-body">
+      <div class="insights-title">💬 Community Insights <span class="insights-new">NEW</span></div>
+      <div style="font-size:12px; color:var(--gray-500); margin-bottom:10px;">Real experiences from verified applicants only</div>
+
+      <div class="insight-card">
+        <div class="insight-top">
+          <div class="insight-avatar" style="background:#4285F4;">A</div>
+          <div>
+            <div class="insight-name">Applicant A</div>
+            <div class="insight-meta">M.S. CS, Stanford '24 · Applied Oct 1 · Offer Nov 12</div>
+            <div style="margin-top:3px;">
+              <span class="verified-badge">✓ Verified · Stanford '24</span>
+            </div>
+          </div>
+        </div>
+        <div class="insight-text">"Recruiter confirmed they are interviewing new grads. The process was: online assessment → phone screen → 3 virtual interviews. Total time: 6 weeks. Don't get discouraged by the silence — it's normal."</div>
+        <div class="insight-helpful"><span>👍 Helpful (34)</span><span>💬 Reply</span></div>
+      </div>
+
+      <div class="insight-card">
+        <div class="insight-top">
+          <div class="insight-avatar" style="background:#34A853;">B</div>
+          <div>
+            <div class="insight-name">Applicant B</div>
+            <div class="insight-meta">M.S. Info Science, UIUC '25</div>
+            <div style="margin-top:3px;">
+              <span class="verified-badge">✓ Verified · UIUC '25</span>
+            </div>
+          </div>
+        </div>
+        <div class="insight-text">"I got a screening call after 2 weeks. Hang in there!"</div>
+        <div class="insight-helpful"><span>👍 Helpful (18)</span></div>
+      </div>
+
+      <div class="insight-card">
+        <div class="insight-top">
+          <div class="insight-avatar" style="background:#EA4335;">C</div>
+          <div>
+            <div class="insight-name">Applicant C</div>
+            <div class="insight-meta">MBA, Booth '24 · Applied Sep 15 · Final round</div>
+            <div style="margin-top:3px;">
+              <span class="verified-badge">✓ Verified · Booth '24</span>
+            </div>
+          </div>
+        </div>
+        <div class="insight-text">"The hiring manager mentioned they value cross-functional leadership experience. Cover letter is actually read here — don't skip it."</div>
+        <div class="insight-helpful"><span>👍 Helpful (27)</span><span>💬 Reply</span></div>
+      </div>
+
+      <div style="margin-top:10px;">
+        <button class="btn btn-outline btn-sm">+ Share your experience</button>
+      </div>
+    </div>
+  </div>
+
+  <div style="text-align:center; margin: 8px 0 20px;">
+    <button class="btn btn-primary" onclick="openModal()">Ready to apply? Apply Now — Easy Apply 💪</button>
+  </div>
+</div>
+
+<!-- ============ SCREEN 3: SUBMITTED ============ -->
+<div class="screen" id="screen3">
+  <div style="margin-top:16px;" class="card">
+    <div class="card-body">
+      <div class="success-icon">🎉</div>
+      <div class="success-title">Application Submitted!</div>
+      <div class="success-sub">Your application for Product Manager – New Grad at Google has been successfully submitted.</div>
+      <table class="detail-table">
+        <tr><td>Position</td><td>Product Manager – New Grad</td></tr>
+        <tr><td>Company</td><td>Google</td></tr>
+        <tr><td>Applied</td><td>Today, Oct 1</td></tr>
+        <tr><td>Status</td><td>✅ Submitted</td></tr>
+        <tr><td>Recruiter</td><td>🏅 Sarah Chen (Gold)</td></tr>
+      </table>
+      <div class="alert alert-blue">💬 Based on Community Insights — similar applicants heard back in 2–3 weeks. You'll be notified at every step.</div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="goTo(4)">📊 Track My Application →</button>
+        <button class="btn btn-outline" onclick="goTo(1)">Browse More Jobs</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ SCREEN 4: TRACKER ============ -->
+<div class="screen" id="screen4">
+  <div style="margin-top:12px;" class="card">
+    <div class="card-body">
+      <div class="section-title">📊 My Applications</div>
+
+      <div style="font-size:15px; font-weight:800; color:var(--gray-800);">Product Manager – New Grad</div>
+      <div style="font-size:13px; color:var(--gray-600);">Google · Mountain View, CA · Hybrid</div>
+      <div style="font-size:12px; color:var(--green); font-weight:600; margin-top:2px;">✅ Applied Oct 1, 2025 · Active Review</div>
+
+      <div class="tracker-steps" style="margin-top:16px;">
+        <div class="tracker-step">
+          <div class="tracker-icon done">✓</div>
+          <div class="tracker-content">
+            <div class="tracker-label">Applied</div>
+            <div class="tracker-date">Oct 1</div>
+          </div>
+        </div>
+        <div class="tracker-step">
+          <div class="tracker-icon done">✓</div>
+          <div class="tracker-content">
+            <div class="tracker-label">Recruiter Review</div>
+            <div class="tracker-date">Oct 8</div>
+            <div class="tracker-timing">⏱ Typically takes 1 week at this stage</div>
+          </div>
+        </div>
+        <div class="tracker-step">
+          <div class="tracker-icon active">●</div>
+          <div class="tracker-content">
+            <div class="tracker-label">Hiring Manager Review</div>
+            <div class="tracker-date" style="color:var(--blue);">Active now</div>
+            <div class="tracker-timing">⏱ Typically takes 1–2 weeks · Expect response by Oct 22</div>
+            <div class="tracker-likelihood">
+              <div class="tracker-likelihood-label">Likelihood of advancing to interview</div>
+              <div class="likelihood-bar"><div class="likelihood-fill"></div></div>
+              <div class="likelihood-pct">62% — Strong profile match</div>
+            </div>
+          </div>
+        </div>
+        <div class="tracker-step">
+          <div class="tracker-icon pending">4</div>
+          <div class="tracker-content">
+            <div class="tracker-label" style="color:var(--gray-400);">Interview</div>
+            <div class="tracker-timing" style="background:var(--gray-100); color:var(--gray-500);">⏱ Typically 2–3 weeks after advancing</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Notification prompt -->
+      <div class="notify-box">
+        <span>🔔 Get notified when similar applicants move to interviews</span>
+        <span class="notify-btn">Turn on →</span>
+      </div>
+
+      <div style="background:var(--gray-50); border-radius:8px; padding:12px; margin-top:10px; border:1px solid var(--gray-200);">
+        <div style="font-size:12px; font-weight:700; color:var(--gray-800); margin-bottom:4px;">💡 Community Tip for This Stage</div>
+        <div style="font-size:12px; color:var(--gray-700);">"I sent a brief follow-up on LinkedIn to the recruiter after 2 weeks — got a response within 48 hours." — Verified Applicant A</div>
+        <div style="margin-top:8px; display:flex; gap:8px;">
+          <button class="btn btn-outline btn-sm">📧 Follow Up</button>
+          <button class="btn btn-outline btn-sm">💬 View Community Insights</button>
+        </div>
+      </div>
+
+      <div style="margin-top:14px; border-top:1px solid var(--gray-100); padding-top:12px;">
+        <button class="btn btn-primary btn-sm" onclick="goTo(5)">Simulate: Got Interview! →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Second application -->
+  <div class="card">
+    <div class="card-body">
+      <div style="font-size:14px; font-weight:700;">Associate Product Manager</div>
+      <div style="font-size:12px; color:var(--gray-600);">Microsoft · Applied Oct 3, 2025</div>
+      <div style="font-size:12px; color:var(--gold); font-weight:600; margin-top:4px;">⏳ Pending — Recruiter review</div>
+      <div class="tracker-timing" style="margin-top:6px;">⏱ Typically takes 5–7 days · Expect response by Oct 10</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ SCREEN 5: CLARITY ============ -->
+<div class="screen" id="screen5">
+  <div style="margin-top:12px;" class="card">
+    <div class="card-body">
+      <div class="clarity-hero">
+        <div class="clarity-star">🌟</div>
+        <div class="clarity-title">Maya's Clarity</div>
+        <div class="clarity-sub">With transparency and community, Maya can now navigate the job search with confidence.</div>
+      </div>
+      <div class="confidence-wrap">
+        <div class="confidence-label">Confidence Level</div>
+        <div class="confidence-bar"><div class="confidence-fill"></div></div>
+        <div style="font-size:12px; color:var(--blue); font-weight:600; margin-top:3px;">85% — Significantly improved</div>
+      </div>
+
+      <div class="alert alert-green">📅 Interview Scheduled! · Google · Product Manager – New Grad · Virtual · Oct 28, 2025 · 10:00 AM PST</div>
+
+      <div class="section-title">What made the difference 🔑</div>
+      <div class="clarity-cards">
+        <div class="clarity-card">
+          <div class="clarity-card-icon">💬</div>
+          <div class="clarity-card-title">Verified Community Insights</div>
+          <div class="clarity-card-text">Real timelines from verified applicants removed anxiety. Maya applied confidently.</div>
+        </div>
+        <div class="clarity-card">
+          <div class="clarity-card-icon">📊</div>
+          <div class="clarity-card-title">Application Tracker</div>
+          <div class="clarity-card-text">Step-by-step status with timing eliminated the "void." Maya always knew where she stood.</div>
+        </div>
+        <div class="clarity-card">
+          <div class="clarity-card-icon">🔍</div>
+          <div class="clarity-card-title">Smarter Job Filters</div>
+          <div class="clarity-card-text">Relevant results only — no more wading through hundreds of irrelevant postings.</div>
+        </div>
+        <div class="clarity-card">
+          <div class="clarity-card-icon">🏅</div>
+          <div class="clarity-card-title">Recruiter Credibility Score</div>
+          <div class="clarity-card-text">Gold-rated recruiter gave Maya confidence she wouldn't be ghosted mid-process.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="team-footer">
+    UIUC Gies · Design Thinking · Spring 2025<br>
+    LinkedIn UX Redesign · Shubham · Tingwen Luo · Zayna Khan · Hari Vignesh<br>
+    P10-D · Prototype incorporating feedback-driven design iterations
+    <br><br>
+    <button class="btn btn-outline btn-sm" onclick="goTo(1)">← Restart Maya's Journey</button>
+  </div>
+</div>
+
+<!-- APPLY MODAL -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <div class="modal-title">🏢 Apply — Product Manager – New Grad</div>
+    <div class="modal-company">Google · Mountain View, CA</div>
+    <div class="form-group">
+      <label class="form-label">Full Name</label>
+      <input class="form-input" type="text" placeholder="Maya Dutt"/>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Email</label>
+      <input class="form-input" type="email" placeholder="maya@example.com"/>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Phone</label>
+      <input class="form-input" type="tel" placeholder="+1 (555) 000-0000"/>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Resume</label>
+      <input class="form-input" type="file"/>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Cover Letter (optional)</label>
+      <input class="form-input" type="file"/>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="submitApplication()">Submit Application ✓</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  let currentScreen = 1;
+
+  function goTo(n) {
+    document.getElementById('screen' + currentScreen).classList.remove('active');
+    document.getElementById('screen' + n).classList.add('active');
+    currentScreen = n;
+    updateStepper(n);
+    window.scrollTo(0, 0);
+  }
+
+  function updateStepper(n) {
+    for (let i = 1; i <= 5; i++) {
+      const num = document.getElementById('sn' + i);
+      const lbl = document.getElementById('sl' + i);
+      if (i < n) {
+        num.className = 'step-num done';
+        lbl.className = 'step-label inactive';
+      } else if (i === n) {
+        num.className = 'step-num active';
+        lbl.className = 'step-label active';
+      } else {
+        num.className = 'step-num inactive';
+        lbl.className = 'step-label inactive';
+      }
+    }
+  }
+
+  function openModal() { document.getElementById('modal').classList.add('open'); }
+  function closeModal() { document.getElementById('modal').classList.remove('open'); }
+  function submitApplication() {
+    closeModal();
+    goTo(3);
+  }
+
+  function toggleFilter(el) {
+    el.classList.toggle('active');
+    const active = document.querySelectorAll('.filter-chip.active');
+    const warning = document.getElementById('filterWarning');
+    if (active.length > 1) {
+      warning.classList.add('show');
+    } else {
+      warning.classList.remove('show');
+    }
+  }
+</script>
+</body>
+</html>
