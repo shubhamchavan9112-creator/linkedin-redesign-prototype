@@ -61,8 +61,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;padding:14px 40px;display:fl
 .btn-out:hover{background:var(--white-faint);transform:translateY(-2px);border-color:var(--blue-bright);}
 
 /* RIPPLE */
-.ripple{position:absolute;border-radius:50%;background:rgba(255,255,255,0.3);transform:scale(0);animation:rippleAnim 0.6s linear;pointer-events:none;}
-@keyframes rippleAnim{to{transform:scale(4);opacity:0;}}
+
 
 /* PHOTO */
 .hero-right{display:flex;justify-content:flex-end;align-items:center;position:relative;overflow:hidden;}
@@ -290,8 +289,8 @@ footer{border-top:1px solid var(--border);padding:48px 40px;position:relative;z-
       </div>
     </div>
     <div class="hero-btns">
-      <a href="https://shubhamchavan9112-creator.github.io/linkedin-redesign-prototype/p10-d.html" target="_blank" class="btn-p btn-blue ripple-btn">View Final Prototype</a>
-      <a href="https://www.linkedin.com/in/shubham-chavan-progressive" target="_blank" class="btn-p btn-out ripple-btn">Connect on LinkedIn</a>
+      <a href="https://shubhamchavan9112-creator.github.io/linkedin-redesign-prototype/p10-d.html" target="_blank" class="btn-p btn-blue">View Final Prototype</a>
+      <a href="https://www.linkedin.com/in/shubham-chavan-progressive" target="_blank" class="btn-p btn-out">Connect on LinkedIn</a>
     </div>
   </div>
   <div class="hero-right fade-up">
@@ -335,7 +334,7 @@ footer{border-top:1px solid var(--border);padding:48px 40px;position:relative;z-
         <div class="slide-inner">
           <p class="themes-intro fade-up">Click each card to uncover what users told us. Once all four are revealed, watch how each insight connects to a design question.</p>
           <div class="theme-cards-grid" id="themeGrid">
-            <div class="theme-card ripple-btn" onclick="flipCard(this,0)">
+            <div class="theme-card" onclick="flipCard(this,0)">
               <div class="theme-front">
                 <div class="theme-num">01</div>
                 <div class="theme-name">The Posting Paradox</div>
@@ -347,7 +346,7 @@ footer{border-top:1px solid var(--border);padding:48px 40px;position:relative;z-
                 <div class="quote-mini">"Algorithm unpredictability makes posting feel risky." — User C</div>
               </div>
             </div>
-            <div class="theme-card ripple-btn" onclick="flipCard(this,1)">
+            <div class="theme-card" onclick="flipCard(this,1)">
               <div class="theme-front">
                 <div class="theme-num">02</div>
                 <div class="theme-name">The Algorithm Doesn't Know Me</div>
@@ -359,7 +358,7 @@ footer{border-top:1px solid var(--border);padding:48px 40px;position:relative;z-
                 <div class="quote-mini">"Unclear job titles, hard to know what roles fit me." — User E</div>
               </div>
             </div>
-            <div class="theme-card ripple-btn" onclick="flipCard(this,2)">
+            <div class="theme-card" onclick="flipCard(this,2)">
               <div class="theme-front">
                 <div class="theme-num">03</div>
                 <div class="theme-name">More Than a Job Board</div>
@@ -371,7 +370,7 @@ footer{border-top:1px solid var(--border);padding:48px 40px;position:relative;z-
                 <div class="quote-mini">"Can get guidance from connections about the company and interviewer." — User D</div>
               </div>
             </div>
-            <div class="theme-card ripple-btn" onclick="flipCard(this,3)">
+            <div class="theme-card" onclick="flipCard(this,3)">
               <div class="theme-front">
                 <div class="theme-num">04</div>
                 <div class="theme-name">The Trust and Safety Gap</div>
@@ -416,7 +415,7 @@ footer{border-top:1px solid var(--border);padding:48px 40px;position:relative;z-
             </div>
           </div>
           <div class="reset-btn-wrap" id="resetBtnWrap">
-            <button class="reset-btn ripple-btn" onclick="resetCards()">Explore Again</button>
+            <button class="reset-btn" onclick="resetCards()">Explore Again</button>
           </div>
         </div>
       </div>
@@ -457,8 +456,8 @@ footer{border-top:1px solid var(--border);padding:48px 40px;position:relative;z-
     <div class="scroll-dot" onclick="goToSlide(1)"></div>
   </div>
   <div class="scroll-nav">
-    <button class="scroll-btn ripple-btn" onclick="prevSlide()">&#8592;</button>
-    <button class="scroll-btn ripple-btn" onclick="nextSlide()">&#8594;</button>
+    <button class="scroll-btn" onclick="prevSlide()">&#8592;</button>
+    <button class="scroll-btn" onclick="nextSlide()">&#8594;</button>
   </div>
 </div>
 
@@ -519,7 +518,7 @@ footer{border-top:1px solid var(--border);padding:48px 40px;position:relative;z-
         <div class="proto-title">Initial Prototype</div>
         <div class="proto-desc">A 5-screen journey covering job browsing, job details with Community Insights, Easy Apply, Application Tracking, and Maya's Clarity screen.</div>
       </div>
-      <a href="https://shubhamchavan9112-creator.github.io/linkedin-redesign-prototype/p9-b.html" target="_blank" class="proto-link link-v1 ripple-btn">Open Prototype v1</a>
+      <a href="https://shubhamchavan9112-creator.github.io/linkedin-redesign-prototype/p9-b.html" target="_blank" class="proto-link link-v1">Open Prototype v1</a>
     </div>
     <div class="proto-tags">
       <span class="proto-tag">Community Insights</span>
@@ -604,7 +603,7 @@ footer{border-top:1px solid var(--border);padding:48px 40px;position:relative;z-
         <div class="proto-title">Feedback-Driven Iteration</div>
         <div class="proto-desc">All 4 improvements built into a fully functional prototype. Experience the difference firsthand.</div>
       </div>
-      <a href="https://shubhamchavan9112-creator.github.io/linkedin-redesign-prototype/p10-d.html" target="_blank" class="proto-link link-v2 ripple-btn">Open Prototype v2</a>
+      <a href="https://shubhamchavan9112-creator.github.io/linkedin-redesign-prototype/p10-d.html" target="_blank" class="proto-link link-v2">Open Prototype v2</a>
     </div>
     <div class="proto-tags">
       <span class="proto-tag">Verified Community Badges</span>
@@ -727,20 +726,7 @@ function goToSlide(n) {
 function nextSlide() { goToSlide(currentSlide + 1); }
 function prevSlide() { goToSlide(currentSlide - 1); }
 
-// RIPPLE EFFECT
-document.addEventListener('click', function(e) {
-  var btn = e.target.closest('.ripple-btn');
-  if (!btn) return;
-  var rect = btn.getBoundingClientRect();
-  var ripple = document.createElement('span');
-  ripple.className = 'ripple';
-  var size = Math.max(rect.width, rect.height);
-  ripple.style.width = ripple.style.height = size + 'px';
-  ripple.style.left = (e.clientX - rect.left - size/2) + 'px';
-  ripple.style.top = (e.clientY - rect.top - size/2) + 'px';
-  btn.appendChild(ripple);
-  setTimeout(function() { ripple.remove(); }, 700);
-});
+
 
 // FADE UP
 var obs = new IntersectionObserver(function(entries) {
